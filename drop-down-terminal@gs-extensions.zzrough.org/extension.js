@@ -540,7 +540,12 @@ const DropDownTerminalExtension = new Lang.Class({
                 } else {
                     this._windowActor.set_position(this._windowX, -this._windowActor.height);
                 }
-
+                // prevent scaling up animation in 3.18
+                Tweener.removeTweens(this._windowActor);
+                Tweener.addTween(this._windowActor, {
+                    x: this._windowX,
+                    scale_x: 1.0
+                });
                 Tweener.addTween(this._windowActor, {
                     y: this._windowY,
                     scale_y: 1.0,
@@ -550,7 +555,16 @@ const DropDownTerminalExtension = new Lang.Class({
                 });
             }));
         } else {
-            completeOpening();
+            // prevent terminal to align with previously focused window in 3.18
+            this._windowActor.opacity = 255;
+            Tweener.removeTweens(this._windowActor);
+            Tweener.addTween(this._windowActor, {
+                x: this._windowX,
+                scale_x: 1.0,
+                y: this._windowY,
+                scale_y: 1.0,
+                onComplete: completeOpening
+            });
         }
     },
 
